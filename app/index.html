@@ -9,32 +9,43 @@
 </head>
 <body>
   <main id="app">
-    <!-- Tela 1: Home -->
+
+    <!-- HOME -->
     <section id="screen-home" class="screen active">
       <h1>Treino Mental</h1>
       <p id="streak">🔥 0 dias seguidos</p>
-      <button id="btn-start">Iniciar sessão de hoje</button>
+      <button id="btn-full" class="big">Sessão completa</button>
+      <button id="btn-short" class="big secondary">Sessão curta</button>
     </section>
 
-    <!-- Tela 2: Cálculo rápido -->
+    <!-- EX1 — CÁLCULO -->
     <section id="screen-calc" class="screen">
-      <header>
+      <header class="topbar">
         <span id="calc-timer">0.0s</span>
-        <span id="calc-counter">1 / 20</span>
+        <span id="calc-counter">1 / 100</span>
       </header>
+      <div class="progress"><div id="calc-progress" class="bar"></div></div>
       <div id="calc-question">7 × 8 =</div>
       <input id="calc-input" type="number" inputmode="numeric" autocomplete="off" />
       <button id="calc-confirm">Confirmar</button>
     </section>
 
-    <!-- Tela 3: Resultado do cálculo -->
+    <!-- RESULTADO EX1 -->
     <section id="screen-calc-result" class="screen">
       <h2>Resultado — Cálculo</h2>
       <p id="calc-summary"></p>
       <button id="btn-to-words">Continuar</button>
     </section>
 
-    <!-- (demais telas entram nas próximas iterações) -->
+    <!-- EX2 — PALAVRAS (esqueleto) -->
+    <section id="screen-words" class="screen">
+      <header class="topbar">
+        <span id="words-timer">2:00</span>
+      </header>
+      <div id="words-grid" class="words-grid"></div>
+      <button id="btn-words-done">Já memorizei</button>
+    </section>
+
   </main>
   <script type="module" src="/js/app.js"></script>
 </body>
