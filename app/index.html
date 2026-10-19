@@ -37,13 +37,67 @@
       <button id="btn-to-words">Continuar</button>
     </section>
 
-    <!-- EX2 — PALAVRAS (esqueleto) -->
+    <!-- EX2 — PALAVRAS (exibição) -->
     <section id="screen-words" class="screen">
-      <header class="topbar">
-        <span id="words-timer">2:00</span>
-      </header>
+      <header class="topbar"><span id="words-timer">2:00</span></header>
       <div id="words-grid" class="words-grid"></div>
-      <button id="btn-words-done">Já memorizei</button>
+      <button id="btn-words-done" class="big secondary">Já memorizei</button>
+    </section>
+
+    <!-- EX2 — TRANSIÇÃO -->
+    <section id="screen-transition" class="screen centered">
+      <h2>Feche os olhos</h2>
+      <p>Respire fundo. Você terá que lembrar das palavras em instantes.</p>
+      <div id="transition-timer" class="huge">10</div>
+    </section>
+
+    <!-- EX2 — RECORDAÇÃO -->
+    <section id="screen-recall" class="screen">
+      <h2>Quais palavras você lembra?</h2>
+      <div class="recall-row">
+        <input id="recall-input" type="text" autocomplete="off" autocapitalize="off" />
+        <button id="recall-add">Adicionar</button>
+      </div>
+      <div id="recall-chips" class="chips"></div>
+      <button id="recall-done" class="big">Terminei</button>
+    </section>
+
+    <!-- RESULTADO EX2 -->
+    <section id="screen-words-result" class="screen">
+      <h2>Resultado — Memória de palavras</h2>
+      <p id="words-summary"></p>
+      <div id="words-detail" class="words-grid small"></div>
+      <button id="btn-to-stroop">Continuar</button>
+    </section>
+
+    <!-- EX3 — STROOP -->
+    <section id="screen-stroop" class="screen">
+      <header class="topbar">
+        <span id="stroop-timer">0.0s</span>
+        <span id="stroop-counter">1 / 30</span>
+      </header>
+      <div class="progress"><div id="stroop-progress" class="bar"></div></div>
+      <div id="stroop-word" class="stroop-word">VERMELHO</div>
+      <div class="stroop-buttons">
+        <button class="color-btn" data-color="red"    aria-label="Vermelho"></button>
+        <button class="color-btn" data-color="blue"   aria-label="Azul"></button>
+        <button class="color-btn" data-color="green"  aria-label="Verde"></button>
+        <button class="color-btn" data-color="yellow" aria-label="Amarelo"></button>
+      </div>
+    </section>
+
+    <!-- RESULTADO EX3 -->
+    <section id="screen-stroop-result" class="screen">
+      <h2>Resultado — Cores</h2>
+      <p id="stroop-summary"></p>
+      <button id="btn-to-summary">Ver resumo</button>
+    </section>
+
+    <!-- RESUMO DA SESSÃO -->
+    <section id="screen-summary" class="screen">
+      <h2>Resumo da sessão</h2>
+      <div id="summary-cards"></div>
+      <button id="btn-home" class="big">Voltar à Home</button>
     </section>
 
   </main>
