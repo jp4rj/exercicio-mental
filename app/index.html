@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Treino Mental</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <main id="app">
+    <!-- Tela 1: Home -->
+    <section id="screen-home" class="screen active">
+      <h1>Treino Mental</h1>
+      <p id="streak">🔥 0 dias seguidos</p>
+      <button id="btn-start">Iniciar sessão de hoje</button>
+    </section>
+
+    <!-- Tela 2: Cálculo rápido -->
+    <section id="screen-calc" class="screen">
+      <header>
+        <span id="calc-timer">0.0s</span>
+        <span id="calc-counter">1 / 20</span>
+      </header>
+      <div id="calc-question">7 × 8 =</div>
+      <input id="calc-input" type="number" inputmode="numeric" autocomplete="off" />
+      <button id="calc-confirm">Confirmar</button>
+    </section>
+
+    <!-- Tela 3: Resultado do cálculo -->
+    <section id="screen-calc-result" class="screen">
+      <h2>Resultado — Cálculo</h2>
+      <p id="calc-summary"></p>
+      <button id="btn-to-words">Continuar</button>
+    </section>
+
+    <!-- (demais telas entram nas próximas iterações) -->
+  </main>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
