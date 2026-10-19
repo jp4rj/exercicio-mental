@@ -2,6 +2,8 @@
 import { CONFIG } from "./config.js";
 import { generateCalcList } from "../utils/calcGenerator.js";
 import { drawWords } from "../utils/wordsBank.js";
+import { generateStroopList } from "../utils/stroopGenerator.js";
+import { saveSession, getStreak, updateStreak } from "./storage.js";
 
 const $ = (id) => document.getElementById(id);
 const show = (id) => {
@@ -12,19 +14,17 @@ const show = (id) => {
 let mode = "full";
 let session = null;
 
-/* ---------- EX1: CÁLCULO ---------- */
-let calcTimerId = null;
-let itemStart = 0;
-let calcStartedAt = 0;
+/* ============ EX1 — CÁLCULO ============ */
+let calcTimerId = null, itemStart = 0, calcStartedAt = 0;
 
 function startCalc() {
   const count = CONFIG[mode].calcCount;
   session = {
     mode,
+    date: new Date().toISOString(),
     calc: { list: generateCalcList(count), index: 0, results: [] }
   };
   calcStartedAt = performance.now();
-  itemStart = calcStartedAt;
   $("calc-counter").textContent = `1 / ${count}`;
   $("calc-progress").style.width = "0%";
   show("screen-calc");
@@ -52,10 +52,7 @@ function submitCalc() {
   const item = session.calc.list[session.calc.index];
   const given = Number(val);
   session.calc.results.push({
-    ...item,
-    given,
-    isCorrect: given === item.answer,
-    timeMs: performance.now() - itemStart,
+    ...item, given, isCorrect: given === item.answer, timeMs: performance.now() - itemStart
   });
   session.calc.index++;
   renderCalcItem();
@@ -69,56 +66,211 @@ function finishCalc() {
   const wrong = r.length - correct;
   const avg = Math.round(r.reduce((s, x) => s + x.timeMs, 0) / r.length);
   const total = ((performance.now() - calcStartedAt) / 1000).toFixed(1);
+  session.calc.stats = { correct, wrong, avgTimeMs: avg, durationMs: performance.now() - calcStartedAt };
   $("calc-summary").textContent =
     `Acertos: ${correct} · Erros: ${wrong} · Tempo médio: ${avg}ms · Total: ${total}s`;
   show("screen-calc-result");
 }
 
-/* ---------- EX2: PALAVRAS (esqueleto) ---------- */
+/* ============ EX2 — PALAVRAS ============ */
 let wordsTimerId = null;
 
 function startWords() {
   const { wordsCount, wordsDisplayMs } = CONFIG[mode];
   const words = drawWords(wordsCount);
-  session.words = { words, startAt: performance.now() };
+  session.words = { words, recalled: [] };
 
-  // renderizar grade
   const grid = $("words-grid");
   grid.innerHTML = "";
   words.forEach(w => {
     const el = document.createElement("span");
-    el.textContent = w;
     el.className = "word";
+    el.textContent = w;
     grid.appendChild(el);
   });
 
   show("screen-words");
-
   const end = performance.now() + wordsDisplayMs;
   wordsTimerId = setInterval(() => {
     const left = Math.max(0, end - performance.now());
     const s = Math.ceil(left / 1000);
     $("words-timer").textContent =
       `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
-    if (left <= 0) {
-      clearInterval(wordsTimerId);
-      finishWordsDisplay();
-    }
+    if (left <= 0) { clearInterval(wordsTimerId); goTransition(); }
   }, 100);
 }
 
-function finishWordsDisplay() {
-  // Próxima parte: tela de transição (10s) → recordação → validação
-  alert("Tempo esgotado. Próximo passo: transição + recordação (implementar na Parte 2).");
+function goTransition() {
+  show("screen-transition");
+  let left = Math.ceil(CONFIG[mode].wordsTransitionMs / 1000);
+  $("transition-timer").textContent = left;
+  const id = setInterval(() => {
+    left--;
+    if (left <= 0) { clearInterval(id); startRecall(); return; }
+    $("transition-timer").textContent = left;
+  }, 1000);
 }
 
-/* ---------- EVENTOS ---------- */
-$("btn-full").addEventListener("click", () => { mode = "full"; startCalc(); });
+/* normalização: minúsculas, sem acento, sem pontuação */
+const norm = (s) =>
+  s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/g, "").trim();
+
+function startRecall() {
+  $("recall-chips").innerHTML = "";
+  $("recall-input").value = "";
+  show("screen-recall");
+  $("recall-input").focus();
+}
+
+function addRecall() {
+  const raw = $("recall-input").value.trim();
+  if (!raw) return;
+  const n = norm(raw);
+  if (!n) return;
+  if (session.words.recalled.some(x => norm(x) === n)) { $("recall-input").value = ""; return; }
+  session.words.recalled.push(raw);
+  const chip = document.createElement("span");
+  chip.className = "chip";
+  chip.textContent = raw;
+  $("recall-chips").appendChild(chip);
+  $("recall-input").value = "";
+  $("recall-input").focus();
+}
+
+function finishRecall() {
+  const original = session.words.words;
+  const recalledNorm = new Set(session.words.recalled.map(norm));
+  const originalNorm = original.map(norm);
+
+  const hits = original.filter((w) => recalledNorm.has(norm(w)));
+  const miss = original.filter((w) => !recalledNorm.has(norm(w)));
+  const invented = session.words.recalled.filter((w) => !originalNorm.includes(norm(w)));
+
+  session.words.stats = {
+    shown: original.length,
+    recalled: hits.length,
+    missed: miss.length,
+    invented: invented.length,
+  };
+
+  $("words-summary").textContent =
+    `Lembradas: ${hits.length} / ${original.length} · Esquecidas: ${miss.length} · Inventadas: ${invented.length}`;
+
+  const detail = $("words-detail");
+  detail.innerHTML = "";
+  original.forEach((w) => {
+    const el = document.createElement("span");
+    el.className = "word " + (recalledNorm.has(norm(w)) ? "hit" : "miss");
+    el.textContent = w;
+    detail.appendChild(el);
+  });
+
+  show("screen-words-result");
+}
+
+/* ============ EX3 — STROOP ============ */
+let stroopTimerId = null, stroopItemStart = 0, stroopStartedAt = 0;
+
+function startStroop() {
+  const count = CONFIG[mode].stroopCount;
+  session.stroop = { list: generateStroopList(count), index: 0, results: [] };
+  stroopStartedAt = performance.now();
+  $("stroop-counter").textContent = `1 / ${count}`;
+  $("stroop-progress").style.width = "0%";
+  show("screen-stroop");
+  renderStroopItem();
+  stroopTimerId = setInterval(() => {
+    $("stroop-timer").textContent = ((performance.now() - stroopStartedAt) / 1000).toFixed(1) + "s";
+  }, 100);
+}
+
+function renderStroopItem() {
+  const { list, index } = session.stroop;
+  if (index >= list.length) return finishStroop();
+  const item = list[index];
+  $("stroop-counter").textContent = `${index + 1} / ${list.length}`;
+  $("stroop-progress").style.width = `${(index / list.length) * 100}%`;
+  const el = $("stroop-word");
+  el.textContent = item.label;
+  el.style.color = ({
+    red: "#dc2626", blue: "#2563eb", green: "#16a34a", yellow: "#eab308"
+  })[item.ink];
+  stroopItemStart = performance.now();
+}
+
+function submitStroop(givenColor) {
+  const item = session.stroop.list[session.stroop.index];
+  session.stroop.results.push({
+    ...item,
+    givenColor,
+    isCorrect: givenColor === item.ink,
+    reactionMs: performance.now() - stroopItemStart,
+  });
+  session.stroop.index++;
+  renderStroopItem();
+}
+
+function finishStroop() {
+  clearInterval(stroopTimerId);
+  $("stroop-progress").style.width = "100%";
+  const r = session.stroop.results;
+  const correct = r.filter(x => x.isCorrect).length;
+  const wrong = r.length - correct;
+  const avg = Math.round(r.reduce((s, x) => s + x.reactionMs, 0) / r.length);
+  session.stroop.stats = { correct, wrong, avgReactionMs: avg };
+  $("stroop-summary").textContent =
+    `Acertos: ${correct} · Erros: ${wrong} · Tempo de reação médio: ${avg}ms`;
+  show("screen-stroop-result");
+}
+
+/* ============ RESUMO + PERSISTÊNCIA ============ */
+function showSummary() {
+  const { calc, words, stroop } = session;
+  const cards = [
+    { title: "Cálculo", text: `${calc.stats.correct} acertos · ${calc.stats.avgTimeMs}ms/op` },
+    { title: "Palavras", text: `${words.stats.recalled} / ${words.stats.shown} lembradas` },
+    { title: "Cores", text: `${stroop.stats.correct} acertos · ${stroop.stats.avgReactionMs}ms` },
+  ];
+  const wrap = $("summary-cards");
+  wrap.innerHTML = "";
+  cards.forEach(c => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `<h3>${c.title}</h3><p>${c.text}</p>`;
+    wrap.appendChild(div);
+  });
+  saveSession(session);
+  show("screen-summary");
+}
+
+function goHome() {
+  $("streak").textContent = `🔥 ${getStreak()} dias seguidos`;
+  show("screen-home");
+}
+
+/* ============ EVENTOS ============ */
+$("btn-full").addEventListener("click",  () => { mode = "full";  startCalc(); });
 $("btn-short").addEventListener("click", () => { mode = "short"; startCalc(); });
 $("calc-confirm").addEventListener("click", submitCalc);
 $("calc-input").addEventListener("keydown", e => { if (e.key === "Enter") submitCalc(); });
-$("btn-to-words").addEventListener("click", startWords);
-$("btn-words-done").addEventListener("click", finishWordsDisplay);
 
-/* ---------- PWA ---------- */
+$("btn-to-words").addEventListener("click", startWords);
+$("btn-words-done").addEventListener("click", () => { clearInterval(wordsTimerId); goTransition(); });
+
+$("recall-add").addEventListener("click", addRecall);
+$("recall-input").addEventListener("keydown", e => { if (e.key === "Enter") addRecall(); });
+$("recall-done").addEventListener("click", finishRecall);
+
+$("btn-to-stroop").addEventListener("click", startStroop);
+document.querySelectorAll(".color-btn").forEach(btn => {
+  btn.addEventListener("click", () => submitStroop(btn.dataset.color));
+});
+
+$("btn-to-summary").addEventListener("click", showSummary);
+$("btn-home").addEventListener("click", goHome);
+
+/* ============ INICIALIZAÇÃO ============ */
+updateStreak();
+$("streak").textContent = `🔥 ${getStreak()} dias seguidos`;
+
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
