@@ -111,7 +111,6 @@ function goTransition() {
   }, 1000);
 }
 
-/* normalização: minúsculas, sem acento, sem pontuação */
 const norm = (s) =>
   s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/g, "").trim();
 
@@ -203,7 +202,7 @@ function submitStroop(givenColor) {
   session.stroop.results.push({
     ...item,
     givenColor,
-    isCorrect: givenColor === item.ink,
+    isCorrect: givenColor === item.ink,   // ✅ compara com a cor da TINTA
     reactionMs: performance.now() - stroopItemStart,
   });
   session.stroop.index++;
@@ -244,6 +243,7 @@ function showSummary() {
 }
 
 function goHome() {
+  updateStreak();
   $("streak").textContent = `🔥 ${getStreak()} dias seguidos`;
   show("screen-home");
 }
@@ -261,8 +261,10 @@ $("recall-add").addEventListener("click", addRecall);
 $("recall-input").addEventListener("keydown", e => { if (e.key === "Enter") addRecall(); });
 $("recall-done").addEventListener("click", finishRecall);
 
-$("btn-to-stroop").addEventListener("click", startStroop);
-document.querySelectorAll(".color-btn").forEach(btn => {
+$("btn-to-stroop").addEventListener("click", () => show("screen-stroop-intro"));
+$("btn-stroop-start").addEventListener("click", startStroop);
+
+document.querySelectorAll("#screen-stroop .color-btn").forEach(btn => {
   btn.addEventListener("click", () => submitStroop(btn.dataset.color));
 });
 
