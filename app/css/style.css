@@ -49,3 +49,35 @@ button.big { display: block; width: 100%; padding: 18px; font-size: 1.2rem; }
   text-align: center;
   font-size: 1rem;
 }
+/* acrescentar ao css/style.css */
+.centered { text-align: center; padding-top: 60px; }
+.huge { font-size: 5rem; font-weight: 700; margin: 24px 0; }
+
+.words-grid.small .word { font-size: .85rem; padding: 6px 4px; }
+.word.hit { background: #14532d; }
+.word.miss { background: #4c0519; }
+
+.recall-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.recall-row input {
+  flex: 1; font-size: 1.1rem; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid #334155; background: #111827; color: #fff;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; min-height: 32px; }
+.chips .chip {
+  background: #1e293b; padding: 6px 10px; border-radius: 999px; font-size: .95rem;
+}
+
+.stroop-word { font-size: 3.2rem; font-weight: 800; text-align: center; margin: 32px 0; letter-spacing: 2px; }
+.stroop-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.color-btn { height: 80px; border-radius: 14px; border: none; cursor: pointer; }
+.color-btn[data-color="red"]    { background: #dc2626; }
+.color-btn[data-color="blue"]   { background: #2563eb; }
+.color-btn[data-color="green"]  { background: #16a34a; }
+.color-btn[data-color="yellow"] { background: #eab308; }
+
+#summary-cards { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+#summary-cards .card {
+  background: #1e293b; border-radius: 12px; padding: 14px 16px;
+}
+#summary-cards .card h3 { margin: 0 0 6px 0; font-size: 1rem; color: #94a3b8; }
+#summary-cards .card p  { margin: 0; font-size: 1.1rem; }
