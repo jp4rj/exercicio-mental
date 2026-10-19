@@ -12,6 +12,9 @@ body {
 .screen.active { display: block; }
 
 h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+p { line-height: 1.5; }
+
 button {
   font-size: 1.1rem;
   padding: 14px 20px;
@@ -24,6 +27,7 @@ button {
 }
 button.secondary { background: #334155; }
 button.big { display: block; width: 100%; padding: 18px; font-size: 1.2rem; }
+button:disabled { opacity: .6; cursor: default; }
 
 .topbar { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; margin-bottom: 8px; }
 .progress { height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
@@ -49,7 +53,7 @@ button.big { display: block; width: 100%; padding: 18px; font-size: 1.2rem; }
   text-align: center;
   font-size: 1rem;
 }
-/* acrescentar ao css/style.css */
+
 .centered { text-align: center; padding-top: 60px; }
 .huge { font-size: 5rem; font-weight: 700; margin: 24px 0; }
 
@@ -74,6 +78,34 @@ button.big { display: block; width: 100%; padding: 18px; font-size: 1.2rem; }
 .color-btn[data-color="blue"]   { background: #2563eb; }
 .color-btn[data-color="green"]  { background: #16a34a; }
 .color-btn[data-color="yellow"] { background: #eab308; }
+
+/* exemplo do Stroop na tela de instrução */
+.stroop-example {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 24px 0;
+}
+.stroop-example-word {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+.stroop-example-arrow {
+  font-size: 1.6rem;
+  color: #94a3b8;
+}
+.color-btn.small {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  margin: 0;
+}
+.hint {
+  color: #94a3b8;
+  font-size: .95rem;
+}
 
 #summary-cards { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
 #summary-cards .card {
