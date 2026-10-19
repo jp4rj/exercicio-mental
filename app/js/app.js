@@ -273,4 +273,4 @@ $("btn-home").addEventListener("click", goHome);
 updateStreak();
 $("streak").textContent = `🔥 ${getStreak()} dias seguidos`;
 
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
