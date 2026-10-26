@@ -1,85 +1,198 @@
-/* css/style.css */
+/* css/style.css — paleta clara e alegre */
+
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
-  background: #0e1116;
-  color: #e6e6e6;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #f4f7fb;
+  color: #1f2937;
   min-height: 100dvh;
+  -webkit-tap-highlight-color: transparent;
 }
-#app { max-width: 640px; margin: 0 auto; padding: 24px; }
+
+#app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+}
+
 .screen { display: none; }
 .screen.active { display: block; }
 
-h1 { font-size: 1.8rem; }
-h2 { font-size: 1.4rem; }
-p { line-height: 1.5; }
+h1 { font-size: 1.9rem; color: #0f766e; margin: 8px 0 4px; }
+h2 { font-size: 1.35rem; color: #0f766e; }
+p  { line-height: 1.5; color: #374151; }
+
+#streak {
+  background: #fef3c7;
+  color: #92400e;
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
 
 button {
   font-size: 1.1rem;
+  font-weight: 600;
   padding: 14px 20px;
-  border-radius: 12px;
+  border-radius: 14px;
   border: none;
-  background: #2563eb;
+  background: #0d9488;
   color: #fff;
   cursor: pointer;
   margin: 6px 4px;
+  transition: transform .06s ease, filter .15s ease;
 }
-button.secondary { background: #334155; }
-button.big { display: block; width: 100%; padding: 18px; font-size: 1.2rem; }
+button:active { transform: scale(.97); }
+button.secondary { background: #f59e0b; color: #fff; }
+button.big {
+  display: block;
+  width: 100%;
+  padding: 18px;
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
 button:disabled { opacity: .6; cursor: default; }
 
-.topbar { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; margin-bottom: 8px; }
-.progress { height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
-.progress .bar { height: 100%; background: #22c55e; width: 0%; transition: width .15s; }
-
-#calc-question { font-size: 3rem; text-align: center; margin: 24px 0; }
-#calc-input {
-  width: 100%; font-size: 2rem; padding: 12px; text-align: center;
-  border-radius: 12px; border: 1px solid #334155; background: #111827; color: #fff;
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #0f766e;
+  margin-bottom: 8px;
 }
-#calc-confirm { width: 100%; margin-top: 12px; }
 
+.progress {
+  height: 10px;
+  background: #e5eaf1;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.progress .bar {
+  height: 100%;
+  background: linear-gradient(90deg, #34d399, #06b6d4);
+  width: 0%;
+  transition: width .15s;
+}
+
+/* ===== EX1 — Cálculo ===== */
+#calc-question {
+  font-size: 2.6rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 8px 0 6px;
+  color: #0f172a;
+}
+
+.calc-answer {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  min-height: 56px;
+  line-height: 56px;
+  margin-bottom: 12px;
+  background: #ffffff;
+  border: 2px dashed #cbd5e1;
+  border-radius: 14px;
+  color: #0d9488;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.key {
+  font-size: 1.6rem;
+  font-weight: 700;
+  padding: 18px 0;
+  border-radius: 14px;
+  border: none;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 2px 0 #d7dde5;
+  margin: 0;
+}
+.key:active { transform: translateY(1px); box-shadow: 0 1px 0 #d7dde5; }
+.key-fn   { background: #fde68a; color: #78350f; }
+.key-enter{ background: #0d9488; color: #fff; font-size: 1.3rem; }
+
+/* ===== EX2 — Palavras ===== */
 .words-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(3, 1fr);   /* 3 colunas */
+  gap: 10px;
   margin: 16px 0;
 }
 .words-grid .word {
-  background: #1e293b;
-  padding: 10px 6px;
-  border-radius: 8px;
+  background: #ffffff;
+  padding: 14px 8px;
+  border-radius: 12px;
   text-align: center;
-  font-size: 1rem;
+  font-size: 1.15rem;                     /* letra bem maior */
+  font-weight: 600;
+  color: #1f2937;
+  box-shadow: 0 2px 0 #e2e8f0;
+  overflow-wrap: anywhere;
 }
 
-.centered { text-align: center; padding-top: 60px; }
-.huge { font-size: 5rem; font-weight: 700; margin: 24px 0; }
+.centered { text-align: center; padding-top: 40px; }
+.huge { font-size: 5rem; font-weight: 700; margin: 24px 0; color: #0d9488; }
 
-.words-grid.small .word { font-size: .85rem; padding: 6px 4px; }
-.word.hit { background: #14532d; }
-.word.miss { background: #4c0519; }
+/* Resultado das palavras: 3 colunas, fonte menor para caber */
+.words-grid.small { gap: 8px; }
+.words-grid.small .word {
+  font-size: .9rem;
+  padding: 8px 4px;
+  font-weight: 500;
+}
+.word.hit  { background: #dcfce7; color: #166534; }
+.word.miss { background: #fee2e2; color: #991b1b; }
 
+/* ===== EX2 — Recordação ===== */
 .recall-row { display: flex; gap: 8px; margin-bottom: 12px; }
 .recall-row input {
-  flex: 1; font-size: 1.1rem; padding: 10px 12px; border-radius: 10px;
-  border: 1px solid #334155; background: #111827; color: #fff;
+  flex: 1;
+  font-size: 1.1rem;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 2px solid #cbd5e1;
+  background: #fff;
+  color: #1f2937;
 }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; min-height: 32px; }
+.recall-row input:focus { outline: none; border-color: #0d9488; }
+.recall-row button { margin: 0; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; min-height: 32px; }
 .chips .chip {
-  background: #1e293b; padding: 6px 10px; border-radius: 999px; font-size: .95rem;
+  background: #e0f2fe;
+  color: #075985;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: .95rem;
 }
 
-.stroop-word { font-size: 3.2rem; font-weight: 800; text-align: center; margin: 32px 0; letter-spacing: 2px; }
+/* ===== EX3 — Stroop ===== */
+.stroop-word {
+  font-size: 3rem;
+  font-weight: 800;
+  text-align: center;
+  margin: 28px 0;
+  letter-spacing: 2px;
+}
 .stroop-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.color-btn { height: 80px; border-radius: 14px; border: none; cursor: pointer; }
-.color-btn[data-color="red"]    { background: #dc2626; }
-.color-btn[data-color="blue"]   { background: #2563eb; }
-.color-btn[data-color="green"]  { background: #16a34a; }
-.color-btn[data-color="yellow"] { background: #eab308; }
+.color-btn { height: 92px; border-radius: 16px; border: none; cursor: pointer; margin: 0; }
+.color-btn[data-color="red"]    { background: #ef4444; }
+.color-btn[data-color="blue"]   { background: #3b82f6; }
+.color-btn[data-color="green"]  { background: #22c55e; }
+.color-btn[data-color="yellow"] { background: #facc15; }
 
-/* exemplo do Stroop na tela de instrução */
 .stroop-example {
   display: flex;
   align-items: center;
@@ -87,29 +200,18 @@ button:disabled { opacity: .6; cursor: default; }
   gap: 16px;
   margin: 24px 0;
 }
-.stroop-example-word {
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: 2px;
-}
-.stroop-example-arrow {
-  font-size: 1.6rem;
-  color: #94a3b8;
-}
-.color-btn.small {
-  width: 56px;
-  height: 56px;
-  border-radius: 10px;
-  margin: 0;
-}
-.hint {
-  color: #94a3b8;
-  font-size: .95rem;
-}
+.stroop-example-word { font-size: 1.8rem; font-weight: 800; letter-spacing: 2px; }
+.stroop-example-arrow { font-size: 1.6rem; color: #64748b; }
+.color-btn.small { width: 52px; height: 52px; border-radius: 12px; margin: 0; }
+.hint { color: #64748b; font-size: .95rem; }
 
+/* ===== Resumo ===== */
 #summary-cards { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
 #summary-cards .card {
-  background: #1e293b; border-radius: 12px; padding: 14px 16px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 0 #e2e8f0;
 }
-#summary-cards .card h3 { margin: 0 0 6px 0; font-size: 1rem; color: #94a3b8; }
-#summary-cards .card p  { margin: 0; font-size: 1.1rem; }
+#summary-cards .card h3 { margin: 0 0 6px; font-size: .95rem; color: #0f766e; }
+#summary-cards .card p  { margin: 0; font-size: 1.1rem; color: #1f2937; }
