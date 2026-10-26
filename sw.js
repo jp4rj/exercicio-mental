@@ -1,5 +1,5 @@
 // sw.js
-const CACHE = "treino-mental-v5";
+const CACHE = "treino-mental-v6";
 const ASSETS = [
   "./",
   "./index.html",
@@ -8,6 +8,7 @@ const ASSETS = [
   "./js/app.js",
   "./js/config.js",
   "./js/storage.js",
+  "./js/history.js",
   "./utils/calcGenerator.js",
   "./utils/wordsBank.js",
   "./utils/stroopGenerator.js",
