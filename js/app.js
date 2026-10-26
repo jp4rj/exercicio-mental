@@ -3,6 +3,7 @@ import { CONFIG } from "./config.js";
 import { generateCalcList } from "../utils/calcGenerator.js";
 import { drawWords } from "../utils/wordsBank.js";
 import { generateStroopList } from "../utils/stroopGenerator.js";
+import { generateTaskSwitchList } from "../utils/taskSwitchGenerator.js";
 import { saveSession, getStreak, updateStreak } from "./storage.js";
 
 const $ = (id) => document.getElementById(id);
@@ -18,21 +19,20 @@ const fmt = (ms) => {
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 };
 
-/* mode: "full" | "short" — controla parâmetros
-   flow: "session" | "single" — controla o que fazer ao final */
-let mode = "full";
-let flow = "session";
+let mode = "full";      // "full" | "short"
+let flow = "session";   // "session" | "single"
 let session = null;
 
+function newSession() {
+  return { mode, flow, date: new Date().toISOString(), calc: null, words: null, stroop: null, switch: null };
+}
+
 /* ============ EX1 — CÁLCULO ============ */
-let calcTimerId = null, itemStart = 0, calcStartedAt = 0;
-let calcBuffer = "";
+let calcTimerId = null, itemStart = 0, calcStartedAt = 0, calcBuffer = "";
 
 function startCalc() {
   const count = CONFIG[mode].calcCount;
-  if (!session) {
-    session = { mode, flow, date: new Date().toISOString(), calc: null, words: null, stroop: null };
-  }
+  if (!session) session = newSession();
   session.calc = { list: generateCalcList(count), index: 0, results: [] };
   calcStartedAt = performance.now();
   $("calc-counter").textContent = `1 / ${count}`;
@@ -57,14 +57,9 @@ function renderCalcItem() {
 }
 
 function pressKey(key) {
-  if (key === "back") {
-    calcBuffer = calcBuffer.slice(0, -1);
-  } else if (key === "enter") {
-    submitCalc();
-    return;
-  } else {
-    if (calcBuffer.length < 4) calcBuffer += key;
-  }
+  if (key === "back") calcBuffer = calcBuffer.slice(0, -1);
+  else if (key === "enter") { submitCalc(); return; }
+  else if (calcBuffer.length < 4) calcBuffer += key;
   $("calc-answer").textContent = calcBuffer || "—";
 }
 
@@ -91,16 +86,9 @@ function finishCalc() {
   $("calc-summary").textContent =
     `Acertos: ${correct} · Erros: ${wrong} · Tempo médio: ${fmt(avg)} · Total: ${fmt(totalMs)}`;
 
-  // No fluxo individual, "Continuar" leva ao resumo
   const nextBtn = $("btn-calc-next");
-  if (flow === "single") {
-    nextBtn.textContent = "Ver resumo";
-    nextBtn.onclick = showSummary;
-  } else {
-    nextBtn.textContent = "Continuar";
-    nextBtn.onclick = startWords;
-  }
-
+  if (flow === "single") { nextBtn.textContent = "Ver resumo"; nextBtn.onclick = showSummary; }
+  else { nextBtn.textContent = "Continuar"; nextBtn.onclick = startWords; }
   show("screen-calc-result");
 }
 
@@ -110,9 +98,7 @@ let wordsTimerId = null;
 function startWords() {
   const { wordsCount, wordsDisplayMs } = CONFIG[mode];
   const words = drawWords(wordsCount);
-  if (!session) {
-    session = { mode, flow, date: new Date().toISOString(), calc: null, words: null, stroop: null };
-  }
+  if (!session) session = newSession();
   session.words = { words, recalled: [] };
 
   const grid = $("words-grid");
@@ -129,8 +115,7 @@ function startWords() {
   wordsTimerId = setInterval(() => {
     const left = Math.max(0, end - performance.now());
     const s = Math.ceil(left / 1000);
-    $("words-timer").textContent =
-      `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+    $("words-timer").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
     if (left <= 0) { clearInterval(wordsTimerId); goTransition(); }
   }, 100);
 }
@@ -199,16 +184,9 @@ function finishRecall() {
     detail.appendChild(el);
   });
 
-  // "Continuar" varia conforme o fluxo
   const nextBtn = $("btn-words-next");
-  if (flow === "single") {
-    nextBtn.textContent = "Ver resumo";
-    nextBtn.onclick = showSummary;
-  } else {
-    nextBtn.textContent = "Continuar";
-    nextBtn.onclick = () => show("screen-stroop-intro");
-  }
-
+  if (flow === "single") { nextBtn.textContent = "Ver resumo"; nextBtn.onclick = showSummary; }
+  else { nextBtn.textContent = "Continuar"; nextBtn.onclick = () => show("screen-stroop-intro"); }
   show("screen-words-result");
 }
 
@@ -217,9 +195,7 @@ let stroopTimerId = null, stroopItemStart = 0, stroopStartedAt = 0;
 
 function startStroop() {
   const count = CONFIG[mode].stroopCount;
-  if (!session) {
-    session = { mode, flow, date: new Date().toISOString(), calc: null, words: null, stroop: null };
-  }
+  if (!session) session = newSession();
   session.stroop = { list: generateStroopList(count), index: 0, results: [] };
   stroopStartedAt = performance.now();
   $("stroop-counter").textContent = `1 / ${count}`;
@@ -239,19 +215,14 @@ function renderStroopItem() {
   $("stroop-progress").style.width = `${(index / list.length) * 100}%`;
   const el = $("stroop-word");
   el.textContent = item.label;
-  el.style.color = ({
-    red: "#ef4444", blue: "#3b82f6", green: "#22c55e", yellow: "#eab308"
-  })[item.ink];
+  el.style.color = ({ red: "#ef4444", blue: "#3b82f6", green: "#22c55e", yellow: "#eab308" })[item.ink];
   stroopItemStart = performance.now();
 }
 
 function submitStroop(givenColor) {
   const item = session.stroop.list[session.stroop.index];
   session.stroop.results.push({
-    ...item,
-    givenColor,
-    isCorrect: givenColor === item.ink,
-    reactionMs: performance.now() - stroopItemStart,
+    ...item, givenColor, isCorrect: givenColor === item.ink, reactionMs: performance.now() - stroopItemStart,
   });
   session.stroop.index++;
   renderStroopItem();
@@ -268,20 +239,90 @@ function finishStroop() {
   $("stroop-summary").textContent =
     `Acertos: ${correct} · Erros: ${wrong} · Tempo de reação médio: ${fmt(avg)}`;
 
-  // "Ver resumo" sempre leva ao resumo — no fluxo individual também
-  $("btn-stroop-next").textContent = "Ver resumo";
-  $("btn-stroop-next").onclick = showSummary;
-
+  const nextBtn = $("btn-stroop-next");
+  if (flow === "single") { nextBtn.textContent = "Ver resumo"; nextBtn.onclick = showSummary; }
+  else { nextBtn.textContent = "Continuar"; nextBtn.onclick = () => show("screen-switch-intro"); }
   show("screen-stroop-result");
 }
 
-/* ============ RESUMO + PERSISTÊNCIA ============ */
+/* ============ EX4 — TAREFA DE TROCA ============ */
+let switchTimerId = null, switchItemStart = 0, switchStartedAt = 0, switchLock = false;
+
+function startSwitch() {
+  const count = CONFIG[mode].taskSwitchCount;
+  if (!session) session = newSession();
+  session.switch = { list: generateTaskSwitchList(count), index: 0, results: [] };
+  switchStartedAt = performance.now();
+  $("switch-counter").textContent = `1 / ${count}`;
+  $("switch-progress").style.width = "0%";
+  show("screen-switch");
+  renderSwitchItem();
+  switchTimerId = setInterval(() => {
+    $("switch-timer").textContent = fmt(performance.now() - switchStartedAt);
+  }, 200);
+}
+
+function renderSwitchItem() {
+  const { list, index } = session.switch;
+  if (index >= list.length) return finishSwitch();
+  const item = list[index];
+  $("switch-counter").textContent = `${index + 1} / ${list.length}`;
+  $("switch-progress").style.width = `${(index / list.length) * 100}%`;
+
+  const stage = $("switch-stage");
+  stage.className = "switch-stage " + (item.rule === "even" ? "blue" : "green");
+  $("switch-question").textContent = item.rule === "even" ? "O número é par?" : "A letra é vogal?";
+  $("switch-stimulus").textContent = item.stimulus;
+
+  switchItemStart = performance.now();
+  switchLock = false;
+}
+
+function submitSwitch(given) {
+  if (switchLock) return;
+  switchLock = true;
+
+  const item = session.switch.list[session.switch.index];
+  const isCorrect = (given === "yes") === item.answer;
+  const reactionMs = performance.now() - switchItemStart;
+
+  session.switch.results.push({ ...item, given, isCorrect, reactionMs });
+
+  // flash rápido
+  const stage = $("switch-stage");
+  stage.classList.add(isCorrect ? "flash-ok" : "flash-err");
+
+  setTimeout(() => {
+    stage.classList.remove("flash-ok", "flash-err");
+    session.switch.index++;
+    renderSwitchItem();
+  }, 180);
+}
+
+function finishSwitch() {
+  clearInterval(switchTimerId);
+  $("switch-progress").style.width = "100%";
+  const r = session.switch.results;
+  const correct = r.filter(x => x.isCorrect).length;
+  const wrong = r.length - correct;
+  const avg = r.reduce((s, x) => s + x.reactionMs, 0) / r.length;
+  session.switch.stats = { correct, wrong, avgReactionMs: avg };
+  $("switch-summary").textContent =
+    `Acertos: ${correct} · Erros: ${wrong} · Tempo de reação médio: ${fmt(avg)}`;
+
+  $("btn-switch-next").textContent = "Ver resumo";
+  $("btn-switch-next").onclick = showSummary;
+  show("screen-switch-result");
+}
+
+/* ============ RESUMO ============ */
 function showSummary() {
-  const { calc, words, stroop } = session;
+  const { calc, words, stroop, "switch": sw } = session;
   const cards = [];
-  if (calc)   cards.push({ title: "Cálculo",  text: `${calc.stats.correct} acertos · ${fmt(calc.stats.avgTimeMs)}/op` });
-  if (words)  cards.push({ title: "Palavras", text: `${words.stats.recalled} / ${words.stats.shown} lembradas` });
-  if (stroop) cards.push({ title: "Cores",    text: `${stroop.stats.correct} acertos · ${fmt(stroop.stats.avgReactionMs)}` });
+  if (calc)   cards.push({ title: "Cálculo",         text: `${calc.stats.correct} acertos · ${fmt(calc.stats.avgTimeMs)}/op` });
+  if (words)  cards.push({ title: "Palavras",        text: `${words.stats.recalled} / ${words.stats.shown} lembradas` });
+  if (stroop) cards.push({ title: "Cores",           text: `${stroop.stats.correct} acertos · ${fmt(stroop.stats.avgReactionMs)}` });
+  if (sw)     cards.push({ title: "Tarefa de troca", text: `${sw.stats.correct} acertos · ${fmt(sw.stats.avgReactionMs)}` });
 
   const wrap = $("summary-cards");
   wrap.innerHTML = "";
@@ -309,20 +350,17 @@ function goHome() {
 $("btn-full").addEventListener("click",  () => { mode = "full";  flow = "session"; session = null; startCalc(); });
 $("btn-short").addEventListener("click", () => { mode = "short"; flow = "session"; session = null; startCalc(); });
 
-// treino individual
 document.querySelectorAll(".single-btn").forEach(btn => {
   btn.addEventListener("click", () => {
-    flow = "single";
-    mode = "full";          // usa parâmetros completos no treino individual
-    session = null;
+    flow = "single"; mode = "full"; session = null;
     const which = btn.dataset.single;
     if (which === "calc")   startCalc();
     if (which === "words")  startWords();
     if (which === "stroop") show("screen-stroop-intro");
+    if (which === "switch") show("screen-switch-intro");
   });
 });
 
-// teclado numérico próprio
 document.querySelectorAll(".keypad .key").forEach(btn => {
   btn.addEventListener("click", () => pressKey(btn.dataset.key));
 });
@@ -334,17 +372,20 @@ $("recall-input").addEventListener("keydown", e => { if (e.key === "Enter") addR
 $("recall-done").addEventListener("click", finishRecall);
 
 $("btn-stroop-start").addEventListener("click", startStroop);
-
 document.querySelectorAll("#screen-stroop .color-btn").forEach(btn => {
   btn.addEventListener("click", () => submitStroop(btn.dataset.color));
 });
 
-$("btn-home").addEventListener("click", goHome);
+$("btn-switch-start").addEventListener("click", startSwitch);
+document.querySelectorAll(".switch-btn").forEach(btn => {
+  btn.addEventListener("click", () => submitSwitch(btn.dataset.answer));
+});
 
-// "Voltar à Home" nas telas de resultado
+$("btn-home").addEventListener("click", goHome);
 $("btn-calc-home").addEventListener("click", goHome);
 $("btn-words-home").addEventListener("click", goHome);
 $("btn-stroop-home").addEventListener("click", goHome);
+$("btn-switch-home").addEventListener("click", goHome);
 
 /* ============ INICIALIZAÇÃO ============ */
 updateStreak();
