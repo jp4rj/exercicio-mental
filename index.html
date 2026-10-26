@@ -14,16 +14,17 @@
     <section id="screen-home" class="screen active">
       <h1>Treino Mental</h1>
       <p id="streak">🔥 0 dias seguidos</p>
+
       <button id="btn-full" class="big">Sessão completa</button>
       <button id="btn-short" class="big secondary">Sessão curta</button>
 
-      <!-- Atalhos de teste (dev) -->
-      <div class="dev-tests">
-        <p class="dev-title">Testar exercício individual</p>
-        <div class="dev-row">
-          <button class="dev-btn" data-test="calc">Cálculo</button>
-          <button class="dev-btn" data-test="words">Palavras</button>
-          <button class="dev-btn" data-test="stroop">Cores</button>
+      <!-- Treino individual -->
+      <div class="single-train">
+        <p class="section-title">Treinar um exercício</p>
+        <div class="single-row">
+          <button class="single-btn" data-single="calc">Cálculo</button>
+          <button class="single-btn" data-single="words">Palavras</button>
+          <button class="single-btn" data-single="stroop">Cores</button>
         </div>
       </div>
     </section>
@@ -58,7 +59,7 @@
     <section id="screen-calc-result" class="screen">
       <h2>Resultado — Cálculo</h2>
       <p id="calc-summary"></p>
-      <button id="btn-to-words">Continuar</button>
+      <button id="btn-calc-next">Continuar</button>
       <button id="btn-calc-home" class="secondary">Voltar à Home</button>
     </section>
 
@@ -92,7 +93,7 @@
       <h2>Resultado — Memória de palavras</h2>
       <p id="words-summary"></p>
       <div id="words-detail" class="words-grid small"></div>
-      <button id="btn-to-stroop">Continuar</button>
+      <button id="btn-words-next">Continuar</button>
       <button id="btn-words-home" class="secondary">Voltar à Home</button>
     </section>
 
@@ -130,7 +131,7 @@
     <section id="screen-stroop-result" class="screen">
       <h2>Resultado — Cores</h2>
       <p id="stroop-summary"></p>
-      <button id="btn-to-summary">Ver resumo</button>
+      <button id="btn-stroop-next">Ver resumo</button>
       <button id="btn-stroop-home" class="secondary">Voltar à Home</button>
     </section>
 
