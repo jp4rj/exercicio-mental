@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Treino Mental</title>
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="stylesheet" href="./css/style.css" />
@@ -21,13 +21,28 @@
     <!-- EX1 — CÁLCULO -->
     <section id="screen-calc" class="screen">
       <header class="topbar">
-        <span id="calc-timer">0.0s</span>
+        <span id="calc-timer">00:00</span>
         <span id="calc-counter">1 / 100</span>
       </header>
       <div class="progress"><div id="calc-progress" class="bar"></div></div>
       <div id="calc-question">7 × 8 =</div>
-      <input id="calc-input" type="number" inputmode="numeric" autocomplete="off" />
-      <button id="calc-confirm">Confirmar</button>
+      <div id="calc-answer" class="calc-answer">—</div>
+
+      <!-- Teclado numérico próprio -->
+      <div class="keypad">
+        <button class="key" data-key="1">1</button>
+        <button class="key" data-key="2">2</button>
+        <button class="key" data-key="3">3</button>
+        <button class="key" data-key="4">4</button>
+        <button class="key" data-key="5">5</button>
+        <button class="key" data-key="6">6</button>
+        <button class="key" data-key="7">7</button>
+        <button class="key" data-key="8">8</button>
+        <button class="key" data-key="9">9</button>
+        <button class="key key-fn" data-key="back">⌫</button>
+        <button class="key" data-key="0">0</button>
+        <button class="key key-enter" data-key="enter">OK</button>
+      </div>
     </section>
 
     <!-- RESULTADO EX1 -->
@@ -87,7 +102,7 @@
     <!-- EX3 — STROOP -->
     <section id="screen-stroop" class="screen">
       <header class="topbar">
-        <span id="stroop-timer">0.0s</span>
+        <span id="stroop-timer">00:00</span>
         <span id="stroop-counter">1 / 30</span>
       </header>
       <div class="progress"><div id="stroop-progress" class="bar"></div></div>
