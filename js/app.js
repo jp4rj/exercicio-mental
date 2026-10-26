@@ -11,11 +11,20 @@ const show = (id) => {
   $(id).classList.add("active");
 };
 
+/* formata ms → mm:ss */
+const fmt = (ms) => {
+  const total = Math.round(ms / 1000);
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+};
+
 let mode = "full";
 let session = null;
 
 /* ============ EX1 — CÁLCULO ============ */
 let calcTimerId = null, itemStart = 0, calcStartedAt = 0;
+let calcBuffer = ""; // resposta atual digitada
 
 function startCalc() {
   const count = CONFIG[mode].calcCount;
@@ -30,8 +39,8 @@ function startCalc() {
   show("screen-calc");
   renderCalcItem();
   calcTimerId = setInterval(() => {
-    $("calc-timer").textContent = ((performance.now() - calcStartedAt) / 1000).toFixed(1) + "s";
-  }, 100);
+    $("calc-timer").textContent = fmt(performance.now() - calcStartedAt);
+  }, 200);
 }
 
 function renderCalcItem() {
@@ -41,16 +50,27 @@ function renderCalcItem() {
   $("calc-counter").textContent = `${index + 1} / ${list.length}`;
   $("calc-progress").style.width = `${(index / list.length) * 100}%`;
   $("calc-question").textContent = `${item.a} ${item.operator} ${item.b} =`;
-  $("calc-input").value = "";
-  $("calc-input").focus();
+  calcBuffer = "";
+  $("calc-answer").textContent = "—";
   itemStart = performance.now();
 }
 
+function pressKey(key) {
+  if (key === "back") {
+    calcBuffer = calcBuffer.slice(0, -1);
+  } else if (key === "enter") {
+    submitCalc();
+    return;
+  } else {
+    if (calcBuffer.length < 4) calcBuffer += key; // limite de 4 dígitos
+  }
+  $("calc-answer").textContent = calcBuffer || "—";
+}
+
 function submitCalc() {
-  const val = $("calc-input").value;
-  if (val === "") return;
+  if (calcBuffer === "") return;
   const item = session.calc.list[session.calc.index];
-  const given = Number(val);
+  const given = Number(calcBuffer);
   session.calc.results.push({
     ...item, given, isCorrect: given === item.answer, timeMs: performance.now() - itemStart
   });
@@ -64,11 +84,11 @@ function finishCalc() {
   const r = session.calc.results;
   const correct = r.filter(x => x.isCorrect).length;
   const wrong = r.length - correct;
-  const avg = Math.round(r.reduce((s, x) => s + x.timeMs, 0) / r.length);
-  const total = ((performance.now() - calcStartedAt) / 1000).toFixed(1);
-  session.calc.stats = { correct, wrong, avgTimeMs: avg, durationMs: performance.now() - calcStartedAt };
+  const avg = r.reduce((s, x) => s + x.timeMs, 0) / r.length;
+  const totalMs = performance.now() - calcStartedAt;
+  session.calc.stats = { correct, wrong, avgTimeMs: avg, durationMs: totalMs };
   $("calc-summary").textContent =
-    `Acertos: ${correct} · Erros: ${wrong} · Tempo médio: ${avg}ms · Total: ${total}s`;
+    `Acertos: ${correct} · Erros: ${wrong} · Tempo médio: ${fmt(avg)} · Total: ${fmt(totalMs)}`;
   show("screen-calc-result");
 }
 
@@ -179,8 +199,8 @@ function startStroop() {
   show("screen-stroop");
   renderStroopItem();
   stroopTimerId = setInterval(() => {
-    $("stroop-timer").textContent = ((performance.now() - stroopStartedAt) / 1000).toFixed(1) + "s";
-  }, 100);
+    $("stroop-timer").textContent = fmt(performance.now() - stroopStartedAt);
+  }, 200);
 }
 
 function renderStroopItem() {
@@ -192,7 +212,7 @@ function renderStroopItem() {
   const el = $("stroop-word");
   el.textContent = item.label;
   el.style.color = ({
-    red: "#dc2626", blue: "#2563eb", green: "#16a34a", yellow: "#eab308"
+    red: "#ef4444", blue: "#3b82f6", green: "#22c55e", yellow: "#eab308"
   })[item.ink];
   stroopItemStart = performance.now();
 }
@@ -202,7 +222,7 @@ function submitStroop(givenColor) {
   session.stroop.results.push({
     ...item,
     givenColor,
-    isCorrect: givenColor === item.ink,   // ✅ compara com a cor da TINTA
+    isCorrect: givenColor === item.ink,
     reactionMs: performance.now() - stroopItemStart,
   });
   session.stroop.index++;
@@ -215,10 +235,10 @@ function finishStroop() {
   const r = session.stroop.results;
   const correct = r.filter(x => x.isCorrect).length;
   const wrong = r.length - correct;
-  const avg = Math.round(r.reduce((s, x) => s + x.reactionMs, 0) / r.length);
+  const avg = r.reduce((s, x) => s + x.reactionMs, 0) / r.length;
   session.stroop.stats = { correct, wrong, avgReactionMs: avg };
   $("stroop-summary").textContent =
-    `Acertos: ${correct} · Erros: ${wrong} · Tempo de reação médio: ${avg}ms`;
+    `Acertos: ${correct} · Erros: ${wrong} · Tempo de reação médio: ${fmt(avg)}`;
   show("screen-stroop-result");
 }
 
@@ -226,9 +246,9 @@ function finishStroop() {
 function showSummary() {
   const { calc, words, stroop } = session;
   const cards = [
-    { title: "Cálculo", text: `${calc.stats.correct} acertos · ${calc.stats.avgTimeMs}ms/op` },
+    { title: "Cálculo",  text: `${calc.stats.correct} acertos · ${fmt(calc.stats.avgTimeMs)}/op` },
     { title: "Palavras", text: `${words.stats.recalled} / ${words.stats.shown} lembradas` },
-    { title: "Cores", text: `${stroop.stats.correct} acertos · ${stroop.stats.avgReactionMs}ms` },
+    { title: "Cores",    text: `${stroop.stats.correct} acertos · ${fmt(stroop.stats.avgReactionMs)}` },
   ];
   const wrap = $("summary-cards");
   wrap.innerHTML = "";
@@ -251,8 +271,11 @@ function goHome() {
 /* ============ EVENTOS ============ */
 $("btn-full").addEventListener("click",  () => { mode = "full";  startCalc(); });
 $("btn-short").addEventListener("click", () => { mode = "short"; startCalc(); });
-$("calc-confirm").addEventListener("click", submitCalc);
-$("calc-input").addEventListener("keydown", e => { if (e.key === "Enter") submitCalc(); });
+
+// teclado numérico próprio
+document.querySelectorAll(".keypad .key").forEach(btn => {
+  btn.addEventListener("click", () => pressKey(btn.dataset.key));
+});
 
 $("btn-to-words").addEventListener("click", startWords);
 $("btn-words-done").addEventListener("click", () => { clearInterval(wordsTimerId); goTransition(); });
