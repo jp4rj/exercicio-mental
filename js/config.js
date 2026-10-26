@@ -3,9 +3,10 @@ export const CONFIG = {
   full: {
     calcCount: 100,
     wordsCount: 30,
-    wordsDisplayMs: 120_000,   // 2 minutos
-    wordsTransitionMs: 10_000, // tela "feche os olhos"
+    wordsDisplayMs: 120_000,
+    wordsTransitionMs: 10_000,
     stroopCount: 30,
+    taskSwitchCount: 15,
   },
   short: {
     calcCount: 50,
@@ -13,12 +14,13 @@ export const CONFIG = {
     wordsDisplayMs: 60_000,
     wordsTransitionMs: 10_000,
     stroopCount: 15,
+    taskSwitchCount: 15,
   },
   stroop: {
-    congruentRatio: 0.2,       // 20% congruente
+    congruentRatio: 0.2,
     colors: ["red", "blue", "green", "yellow"],
   },
   calc: {
-    milestones: 25,            // marco na barra de progresso
+    milestones: 25,
   },
 };
