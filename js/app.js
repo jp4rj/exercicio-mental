@@ -4,7 +4,8 @@ import { generateCalcList } from "../utils/calcGenerator.js";
 import { drawWords } from "../utils/wordsBank.js";
 import { generateStroopList } from "../utils/stroopGenerator.js";
 import { generateTaskSwitchList } from "../utils/taskSwitchGenerator.js";
-import { saveSession, getStreak, updateStreak } from "./storage.js";
+import { saveSession, loadSessions, getStreak, updateStreak } from "./storage.js";
+import { renderHistory } from "./history.js";
 
 const $ = (id) => document.getElementById(id);
 const show = (id) => {
@@ -19,8 +20,8 @@ const fmt = (ms) => {
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 };
 
-let mode = "full";      // "full" | "short"
-let flow = "session";   // "session" | "single"
+let mode = "full";
+let flow = "session";
 let session = null;
 
 function newSession() {
@@ -288,7 +289,6 @@ function submitSwitch(given) {
 
   session.switch.results.push({ ...item, given, isCorrect, reactionMs });
 
-  // flash rápido
   const stage = $("switch-stage");
   stage.classList.add(isCorrect ? "flash-ok" : "flash-err");
 
@@ -346,9 +346,18 @@ function goHome() {
   show("screen-home");
 }
 
+/* ============ HISTÓRICO ============ */
+let historyRange = "7";
+
+function openHistory() {
+  renderHistory(loadSessions(), historyRange);
+  show("screen-history");
+}
+
 /* ============ EVENTOS ============ */
 $("btn-full").addEventListener("click",  () => { mode = "full";  flow = "session"; session = null; startCalc(); });
 $("btn-short").addEventListener("click", () => { mode = "short"; flow = "session"; session = null; startCalc(); });
+$("btn-history").addEventListener("click", openHistory);
 
 document.querySelectorAll(".single-btn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -386,6 +395,17 @@ $("btn-calc-home").addEventListener("click", goHome);
 $("btn-words-home").addEventListener("click", goHome);
 $("btn-stroop-home").addEventListener("click", goHome);
 $("btn-switch-home").addEventListener("click", goHome);
+
+// Histórico — filtros
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    historyRange = btn.dataset.range;
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderHistory(loadSessions(), historyRange);
+  });
+});
+$("btn-history-home").addEventListener("click", goHome);
 
 /* ============ INICIALIZAÇÃO ============ */
 updateStreak();
