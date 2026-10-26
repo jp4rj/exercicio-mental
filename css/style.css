@@ -57,6 +57,33 @@ button.big {
 }
 button:disabled { opacity: .6; cursor: default; }
 
+/* ===== Atalhos de teste ===== */
+.dev-tests {
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px dashed #cbd5e1;
+}
+.dev-title {
+  font-size: .85rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin: 0 0 8px;
+  text-align: center;
+}
+.dev-row {
+  display: flex;
+  gap: 8px;
+}
+.dev-btn {
+  flex: 1;
+  background: #e0f2fe;
+  color: #075985;
+  font-size: .95rem;
+  padding: 10px 8px;
+  margin: 0;
+}
+
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -122,33 +149,34 @@ button:disabled { opacity: .6; cursor: default; }
 .key-fn   { background: #fde68a; color: #78350f; }
 .key-enter{ background: #0d9488; color: #fff; font-size: 1.3rem; }
 
-/* ===== EX2 — Palavras ===== */
+/* ===== EX2 — Palavras (grade compacta) ===== */
 .words-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);   /* 3 colunas */
-  gap: 10px;
-  margin: 16px 0;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;                 /* espaçamento menor */
+  margin: 12px 0;
 }
 .words-grid .word {
   background: #ffffff;
-  padding: 14px 8px;
-  border-radius: 12px;
+  padding: 8px 6px;         /* padding menor */
+  border-radius: 10px;
   text-align: center;
-  font-size: 1.15rem;                     /* letra bem maior */
+  font-size: 1rem;          /* fonte ajustada */
   font-weight: 600;
+  line-height: 1.15;        /* linhas mais justas */
   color: #1f2937;
-  box-shadow: 0 2px 0 #e2e8f0;
+  box-shadow: 0 1px 0 #e2e8f0;
   overflow-wrap: anywhere;
 }
 
 .centered { text-align: center; padding-top: 40px; }
 .huge { font-size: 5rem; font-weight: 700; margin: 24px 0; color: #0d9488; }
 
-/* Resultado das palavras: 3 colunas, fonte menor para caber */
-.words-grid.small { gap: 8px; }
+/* Resultado das palavras: 3 colunas, compacto */
+.words-grid.small { gap: 6px; }
 .words-grid.small .word {
-  font-size: .9rem;
-  padding: 8px 4px;
+  font-size: .8rem;
+  padding: 6px 3px;
   font-weight: 500;
 }
 .word.hit  { background: #dcfce7; color: #166534; }
