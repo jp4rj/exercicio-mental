@@ -1,5 +1,5 @@
 // sw.js
-const CACHE = "treino-mental-v4";
+const CACHE = "treino-mental-v5";
 const ASSETS = [
   "./",
   "./index.html",
@@ -10,7 +10,8 @@ const ASSETS = [
   "./js/storage.js",
   "./utils/calcGenerator.js",
   "./utils/wordsBank.js",
-  "./utils/stroopGenerator.js"
+  "./utils/stroopGenerator.js",
+  "./utils/taskSwitchGenerator.js"
 ];
 
 self.addEventListener("install", (e) => {
@@ -26,7 +27,5 @@ self.addEventListener("activate", (e) => {
 });
 
 self.addEventListener("fetch", (e) => {
-  e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
-  );
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
 });
