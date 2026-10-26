@@ -18,9 +18,11 @@ const fmt = (ms) => {
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 };
 
+/* mode: "full" | "short" — controla parâmetros
+   flow: "session" | "single" — controla o que fazer ao final */
 let mode = "full";
+let flow = "session";
 let session = null;
-let testOnly = null; // null = sessão completa/curta | "calc" | "words" | "stroop"
 
 /* ============ EX1 — CÁLCULO ============ */
 let calcTimerId = null, itemStart = 0, calcStartedAt = 0;
@@ -29,7 +31,7 @@ let calcBuffer = "";
 function startCalc() {
   const count = CONFIG[mode].calcCount;
   if (!session) {
-    session = { mode, date: new Date().toISOString(), calc: null, words: null, stroop: null };
+    session = { mode, flow, date: new Date().toISOString(), calc: null, words: null, stroop: null };
   }
   session.calc = { list: generateCalcList(count), index: 0, results: [] };
   calcStartedAt = performance.now();
@@ -88,6 +90,17 @@ function finishCalc() {
   session.calc.stats = { correct, wrong, avgTimeMs: avg, durationMs: totalMs };
   $("calc-summary").textContent =
     `Acertos: ${correct} · Erros: ${wrong} · Tempo médio: ${fmt(avg)} · Total: ${fmt(totalMs)}`;
+
+  // No fluxo individual, "Continuar" leva ao resumo
+  const nextBtn = $("btn-calc-next");
+  if (flow === "single") {
+    nextBtn.textContent = "Ver resumo";
+    nextBtn.onclick = showSummary;
+  } else {
+    nextBtn.textContent = "Continuar";
+    nextBtn.onclick = startWords;
+  }
+
   show("screen-calc-result");
 }
 
@@ -98,7 +111,7 @@ function startWords() {
   const { wordsCount, wordsDisplayMs } = CONFIG[mode];
   const words = drawWords(wordsCount);
   if (!session) {
-    session = { mode, date: new Date().toISOString(), calc: null, words: null, stroop: null };
+    session = { mode, flow, date: new Date().toISOString(), calc: null, words: null, stroop: null };
   }
   session.words = { words, recalled: [] };
 
@@ -186,6 +199,16 @@ function finishRecall() {
     detail.appendChild(el);
   });
 
+  // "Continuar" varia conforme o fluxo
+  const nextBtn = $("btn-words-next");
+  if (flow === "single") {
+    nextBtn.textContent = "Ver resumo";
+    nextBtn.onclick = showSummary;
+  } else {
+    nextBtn.textContent = "Continuar";
+    nextBtn.onclick = () => show("screen-stroop-intro");
+  }
+
   show("screen-words-result");
 }
 
@@ -195,7 +218,7 @@ let stroopTimerId = null, stroopItemStart = 0, stroopStartedAt = 0;
 function startStroop() {
   const count = CONFIG[mode].stroopCount;
   if (!session) {
-    session = { mode, date: new Date().toISOString(), calc: null, words: null, stroop: null };
+    session = { mode, flow, date: new Date().toISOString(), calc: null, words: null, stroop: null };
   }
   session.stroop = { list: generateStroopList(count), index: 0, results: [] };
   stroopStartedAt = performance.now();
@@ -244,6 +267,11 @@ function finishStroop() {
   session.stroop.stats = { correct, wrong, avgReactionMs: avg };
   $("stroop-summary").textContent =
     `Acertos: ${correct} · Erros: ${wrong} · Tempo de reação médio: ${fmt(avg)}`;
+
+  // "Ver resumo" sempre leva ao resumo — no fluxo individual também
+  $("btn-stroop-next").textContent = "Ver resumo";
+  $("btn-stroop-next").onclick = showSummary;
+
   show("screen-stroop-result");
 }
 
@@ -263,6 +291,7 @@ function showSummary() {
     div.innerHTML = `<h3>${c.title}</h3><p>${c.text}</p>`;
     wrap.appendChild(div);
   });
+
   saveSession(session);
   show("screen-summary");
 }
@@ -271,21 +300,22 @@ function goHome() {
   updateStreak();
   $("streak").textContent = `🔥 ${getStreak()} dias seguidos`;
   session = null;
-  testOnly = null;
+  flow = "session";
+  mode = "full";
   show("screen-home");
 }
 
 /* ============ EVENTOS ============ */
-$("btn-full").addEventListener("click",  () => { mode = "full";  testOnly = null; session = null; startCalc(); });
-$("btn-short").addEventListener("click", () => { mode = "short"; testOnly = null; session = null; startCalc(); });
+$("btn-full").addEventListener("click",  () => { mode = "full";  flow = "session"; session = null; startCalc(); });
+$("btn-short").addEventListener("click", () => { mode = "short"; flow = "session"; session = null; startCalc(); });
 
-// atalhos de teste
-document.querySelectorAll(".dev-btn").forEach(btn => {
+// treino individual
+document.querySelectorAll(".single-btn").forEach(btn => {
   btn.addEventListener("click", () => {
-    const which = btn.dataset.test;
-    testOnly = which;
-    mode = "full";       // usa parâmetros completos no teste
+    flow = "single";
+    mode = "full";          // usa parâmetros completos no treino individual
     session = null;
+    const which = btn.dataset.single;
     if (which === "calc")   startCalc();
     if (which === "words")  startWords();
     if (which === "stroop") show("screen-stroop-intro");
@@ -297,24 +327,21 @@ document.querySelectorAll(".keypad .key").forEach(btn => {
   btn.addEventListener("click", () => pressKey(btn.dataset.key));
 });
 
-$("btn-to-words").addEventListener("click", startWords);
 $("btn-words-done").addEventListener("click", () => { clearInterval(wordsTimerId); goTransition(); });
 
 $("recall-add").addEventListener("click", addRecall);
 $("recall-input").addEventListener("keydown", e => { if (e.key === "Enter") addRecall(); });
 $("recall-done").addEventListener("click", finishRecall);
 
-$("btn-to-stroop").addEventListener("click", () => show("screen-stroop-intro"));
 $("btn-stroop-start").addEventListener("click", startStroop);
 
 document.querySelectorAll("#screen-stroop .color-btn").forEach(btn => {
   btn.addEventListener("click", () => submitStroop(btn.dataset.color));
 });
 
-$("btn-to-summary").addEventListener("click", showSummary);
 $("btn-home").addEventListener("click", goHome);
 
-// voltar à Home a partir dos resultados (útil no modo teste)
+// "Voltar à Home" nas telas de resultado
 $("btn-calc-home").addEventListener("click", goHome);
 $("btn-words-home").addEventListener("click", goHome);
 $("btn-stroop-home").addEventListener("click", goHome);
