@@ -16,6 +16,16 @@
       <p id="streak">🔥 0 dias seguidos</p>
       <button id="btn-full" class="big">Sessão completa</button>
       <button id="btn-short" class="big secondary">Sessão curta</button>
+
+      <!-- Atalhos de teste (dev) -->
+      <div class="dev-tests">
+        <p class="dev-title">Testar exercício individual</p>
+        <div class="dev-row">
+          <button class="dev-btn" data-test="calc">Cálculo</button>
+          <button class="dev-btn" data-test="words">Palavras</button>
+          <button class="dev-btn" data-test="stroop">Cores</button>
+        </div>
+      </div>
     </section>
 
     <!-- EX1 — CÁLCULO -->
@@ -28,7 +38,6 @@
       <div id="calc-question">7 × 8 =</div>
       <div id="calc-answer" class="calc-answer">—</div>
 
-      <!-- Teclado numérico próprio -->
       <div class="keypad">
         <button class="key" data-key="1">1</button>
         <button class="key" data-key="2">2</button>
@@ -50,6 +59,7 @@
       <h2>Resultado — Cálculo</h2>
       <p id="calc-summary"></p>
       <button id="btn-to-words">Continuar</button>
+      <button id="btn-calc-home" class="secondary">Voltar à Home</button>
     </section>
 
     <!-- EX2 — PALAVRAS (exibição) -->
@@ -83,6 +93,7 @@
       <p id="words-summary"></p>
       <div id="words-detail" class="words-grid small"></div>
       <button id="btn-to-stroop">Continuar</button>
+      <button id="btn-words-home" class="secondary">Voltar à Home</button>
     </section>
 
     <!-- EX3 — INSTRUÇÃO -->
@@ -91,7 +102,7 @@
       <p>Vai aparecer uma palavra de cor escrita em <strong>outra cor</strong>.</p>
       <p>Toque na <strong>COR DA TINTA</strong>, não no que está escrito.</p>
       <div class="stroop-example">
-        <span class="stroop-example-word" style="color:#2563eb">VERMELHO</span>
+        <span class="stroop-example-word" style="color:#3b82f6">VERMELHO</span>
         <span class="stroop-example-arrow">→</span>
         <button class="color-btn small" data-color="blue" aria-label="Azul" disabled></button>
       </div>
@@ -120,6 +131,7 @@
       <h2>Resultado — Cores</h2>
       <p id="stroop-summary"></p>
       <button id="btn-to-summary">Ver resumo</button>
+      <button id="btn-stroop-home" class="secondary">Voltar à Home</button>
     </section>
 
     <!-- RESUMO DA SESSÃO -->
