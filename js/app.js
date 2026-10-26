@@ -11,7 +11,6 @@ const show = (id) => {
   $(id).classList.add("active");
 };
 
-/* formata ms → mm:ss */
 const fmt = (ms) => {
   const total = Math.round(ms / 1000);
   const m = Math.floor(total / 60);
@@ -21,18 +20,18 @@ const fmt = (ms) => {
 
 let mode = "full";
 let session = null;
+let testOnly = null; // null = sessão completa/curta | "calc" | "words" | "stroop"
 
 /* ============ EX1 — CÁLCULO ============ */
 let calcTimerId = null, itemStart = 0, calcStartedAt = 0;
-let calcBuffer = ""; // resposta atual digitada
+let calcBuffer = "";
 
 function startCalc() {
   const count = CONFIG[mode].calcCount;
-  session = {
-    mode,
-    date: new Date().toISOString(),
-    calc: { list: generateCalcList(count), index: 0, results: [] }
-  };
+  if (!session) {
+    session = { mode, date: new Date().toISOString(), calc: null, words: null, stroop: null };
+  }
+  session.calc = { list: generateCalcList(count), index: 0, results: [] };
   calcStartedAt = performance.now();
   $("calc-counter").textContent = `1 / ${count}`;
   $("calc-progress").style.width = "0%";
@@ -62,7 +61,7 @@ function pressKey(key) {
     submitCalc();
     return;
   } else {
-    if (calcBuffer.length < 4) calcBuffer += key; // limite de 4 dígitos
+    if (calcBuffer.length < 4) calcBuffer += key;
   }
   $("calc-answer").textContent = calcBuffer || "—";
 }
@@ -98,6 +97,9 @@ let wordsTimerId = null;
 function startWords() {
   const { wordsCount, wordsDisplayMs } = CONFIG[mode];
   const words = drawWords(wordsCount);
+  if (!session) {
+    session = { mode, date: new Date().toISOString(), calc: null, words: null, stroop: null };
+  }
   session.words = { words, recalled: [] };
 
   const grid = $("words-grid");
@@ -192,6 +194,9 @@ let stroopTimerId = null, stroopItemStart = 0, stroopStartedAt = 0;
 
 function startStroop() {
   const count = CONFIG[mode].stroopCount;
+  if (!session) {
+    session = { mode, date: new Date().toISOString(), calc: null, words: null, stroop: null };
+  }
   session.stroop = { list: generateStroopList(count), index: 0, results: [] };
   stroopStartedAt = performance.now();
   $("stroop-counter").textContent = `1 / ${count}`;
@@ -245,11 +250,11 @@ function finishStroop() {
 /* ============ RESUMO + PERSISTÊNCIA ============ */
 function showSummary() {
   const { calc, words, stroop } = session;
-  const cards = [
-    { title: "Cálculo",  text: `${calc.stats.correct} acertos · ${fmt(calc.stats.avgTimeMs)}/op` },
-    { title: "Palavras", text: `${words.stats.recalled} / ${words.stats.shown} lembradas` },
-    { title: "Cores",    text: `${stroop.stats.correct} acertos · ${fmt(stroop.stats.avgReactionMs)}` },
-  ];
+  const cards = [];
+  if (calc)   cards.push({ title: "Cálculo",  text: `${calc.stats.correct} acertos · ${fmt(calc.stats.avgTimeMs)}/op` });
+  if (words)  cards.push({ title: "Palavras", text: `${words.stats.recalled} / ${words.stats.shown} lembradas` });
+  if (stroop) cards.push({ title: "Cores",    text: `${stroop.stats.correct} acertos · ${fmt(stroop.stats.avgReactionMs)}` });
+
   const wrap = $("summary-cards");
   wrap.innerHTML = "";
   cards.forEach(c => {
@@ -265,12 +270,27 @@ function showSummary() {
 function goHome() {
   updateStreak();
   $("streak").textContent = `🔥 ${getStreak()} dias seguidos`;
+  session = null;
+  testOnly = null;
   show("screen-home");
 }
 
 /* ============ EVENTOS ============ */
-$("btn-full").addEventListener("click",  () => { mode = "full";  startCalc(); });
-$("btn-short").addEventListener("click", () => { mode = "short"; startCalc(); });
+$("btn-full").addEventListener("click",  () => { mode = "full";  testOnly = null; session = null; startCalc(); });
+$("btn-short").addEventListener("click", () => { mode = "short"; testOnly = null; session = null; startCalc(); });
+
+// atalhos de teste
+document.querySelectorAll(".dev-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const which = btn.dataset.test;
+    testOnly = which;
+    mode = "full";       // usa parâmetros completos no teste
+    session = null;
+    if (which === "calc")   startCalc();
+    if (which === "words")  startWords();
+    if (which === "stroop") show("screen-stroop-intro");
+  });
+});
 
 // teclado numérico próprio
 document.querySelectorAll(".keypad .key").forEach(btn => {
@@ -293,6 +313,11 @@ document.querySelectorAll("#screen-stroop .color-btn").forEach(btn => {
 
 $("btn-to-summary").addEventListener("click", showSummary);
 $("btn-home").addEventListener("click", goHome);
+
+// voltar à Home a partir dos resultados (útil no modo teste)
+$("btn-calc-home").addEventListener("click", goHome);
+$("btn-words-home").addEventListener("click", goHome);
+$("btn-stroop-home").addEventListener("click", goHome);
 
 /* ============ INICIALIZAÇÃO ============ */
 updateStreak();
