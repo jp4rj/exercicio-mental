@@ -57,30 +57,28 @@ button.big {
 }
 button:disabled { opacity: .6; cursor: default; }
 
-/* ===== Atalhos de teste ===== */
-.dev-tests {
+/* ===== Treino individual ===== */
+.single-train {
   margin-top: 28px;
-  padding-top: 16px;
-  border-top: 1px dashed #cbd5e1;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
 }
-.dev-title {
-  font-size: .85rem;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  margin: 0 0 8px;
-  text-align: center;
+.section-title {
+  font-size: .95rem;
+  color: #0f766e;
+  font-weight: 700;
+  margin: 0 0 10px;
 }
-.dev-row {
+.single-row {
   display: flex;
   gap: 8px;
 }
-.dev-btn {
+.single-btn {
   flex: 1;
   background: #e0f2fe;
   color: #075985;
-  font-size: .95rem;
-  padding: 10px 8px;
+  font-size: 1rem;
+  padding: 12px 8px;
   margin: 0;
 }
 
@@ -153,17 +151,17 @@ button:disabled { opacity: .6; cursor: default; }
 .words-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;                 /* espaçamento menor */
+  gap: 6px;
   margin: 12px 0;
 }
 .words-grid .word {
   background: #ffffff;
-  padding: 8px 6px;         /* padding menor */
+  padding: 8px 6px;
   border-radius: 10px;
   text-align: center;
-  font-size: 1rem;          /* fonte ajustada */
+  font-size: 1rem;
   font-weight: 600;
-  line-height: 1.15;        /* linhas mais justas */
+  line-height: 1.15;
   color: #1f2937;
   box-shadow: 0 1px 0 #e2e8f0;
   overflow-wrap: anywhere;
@@ -172,7 +170,6 @@ button:disabled { opacity: .6; cursor: default; }
 .centered { text-align: center; padding-top: 40px; }
 .huge { font-size: 5rem; font-weight: 700; margin: 24px 0; color: #0d9488; }
 
-/* Resultado das palavras: 3 colunas, compacto */
 .words-grid.small { gap: 6px; }
 .words-grid.small .word {
   font-size: .8rem;
