@@ -1,9 +1,11 @@
 // sw.js
-const CACHE = "treino-mental-v7";
+const CACHE = "treino-mental-v8";
 const ASSETS = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
+  "./icon-192.png",
+  "./icon-512.png",
   "./css/style.css",
   "./js/app.js",
   "./js/config.js",
