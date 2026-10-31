@@ -1,7 +1,7 @@
 // js/config.js
 export const CONFIG = {
   full: {
-    calcCount: 100,
+    calcCount: 50,
     wordsCount: 30,
     wordsDisplayMs: 120_000,
     wordsTransitionMs: 10_000,
@@ -9,7 +9,7 @@ export const CONFIG = {
     taskSwitchCount: 15,
   },
   short: {
-    calcCount: 50,
+    calcCount: 25,
     wordsCount: 15,
     wordsDisplayMs: 60_000,
     wordsTransitionMs: 10_000,
