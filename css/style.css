@@ -127,43 +127,43 @@ button:disabled { opacity: .6; cursor: default; }
 .key-fn    { background: #fde68a; color: #78350f; }
 .key-enter { background: #0d9488; color: #fff; font-size: 1.3rem; }
 
-/* ===== EX2 — Palavras (2 colunas, fonte grande) ===== */
+/* ===== EX2 — Palavras (2 colunas, fonte grande, espaçamento compacto) ===== */
 .words-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin: 12px 0;
+  gap: 6px;
+  margin: 8px 0;
 }
 .words-grid .word {
   background: #ffffff;
-  padding: 16px 10px;
-  border-radius: 12px;
+  padding: 10px 8px;
+  border-radius: 10px;
   text-align: center;
   font-size: 1.5rem;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
   color: #1f2937;
-  box-shadow: 0 2px 0 #e2e8f0;
+  box-shadow: 0 1px 0 #e2e8f0;
   overflow-wrap: anywhere;
 }
 
 .words-footer {
   text-align: center;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
 
 .centered { text-align: center; padding-top: 40px; }
 .huge { font-size: 5rem; font-weight: 700; margin: 24px 0; color: #0d9488; }
 
-/* Resultado das palavras: 3 colunas compactas (mantém para caber a lista toda) */
+/* Resultado das palavras: 3 colunas compactas */
 .words-grid.small {
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  gap: 4px;
 }
 .words-grid.small .word {
   font-size: .8rem;
-  padding: 6px 3px;
+  padding: 5px 3px;
   font-weight: 500;
 }
 .word.hit  { background: #dcfce7; color: #166534; }
