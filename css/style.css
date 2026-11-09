@@ -5,7 +5,7 @@
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  background: #f4f7fb;
+  background: #e8f4f1;
   color: #1f2937;
   min-height: 100dvh;
   -webkit-tap-highlight-color: transparent;
@@ -66,7 +66,7 @@ button:disabled { opacity: .6; cursor: default; }
 .single-train {
   margin-top: 28px;
   padding-top: 20px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #cbd5e1;
 }
 .section-title {
   font-size: .95rem;
@@ -80,11 +80,12 @@ button:disabled { opacity: .6; cursor: default; }
   gap: 8px;
 }
 .single-btn {
-  background: #e0f2fe;
+  background: #ffffff;
   color: #075985;
   font-size: 1rem;
   padding: 12px 8px;
   margin: 0;
+  box-shadow: 0 2px 0 #cbd5e1;
 }
 
 .topbar {
@@ -98,7 +99,7 @@ button:disabled { opacity: .6; cursor: default; }
 
 .progress {
   height: 10px;
-  background: #e5eaf1;
+  background: #cfe6e0;
   border-radius: 6px;
   overflow: hidden;
   margin-bottom: 22px;
@@ -115,19 +116,19 @@ button:disabled { opacity: .6; cursor: default; }
 .calc-answer {
   text-align: center; font-size: 2rem; font-weight: 700;
   min-height: 56px; line-height: 56px; margin-bottom: 12px;
-  background: #fff; border: 2px dashed #cbd5e1; border-radius: 14px; color: #0d9488;
+  background: #fff; border: 2px dashed #94b8b0; border-radius: 14px; color: #0d9488;
 }
 .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .key {
   font-size: 1.6rem; font-weight: 700; padding: 18px 0;
   border-radius: 14px; border: none; background: #fff; color: #0f172a;
-  box-shadow: 0 2px 0 #d7dde5; margin: 0;
+  box-shadow: 0 2px 0 #cbd5c4; margin: 0;
 }
-.key:active { transform: translateY(1px); box-shadow: 0 1px 0 #d7dde5; }
+.key:active { transform: translateY(1px); box-shadow: 0 1px 0 #cbd5c4; }
 .key-fn    { background: #fde68a; color: #78350f; }
 .key-enter { background: #0d9488; color: #fff; font-size: 1.3rem; }
 
-/* ===== EX2 — Palavras (2 colunas, fonte grande, espaçamento compacto) ===== */
+/* ===== EX2 — Palavras (2 colunas, fonte grande, padding 8px) ===== */
 .words-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -136,14 +137,14 @@ button:disabled { opacity: .6; cursor: default; }
 }
 .words-grid .word {
   background: #ffffff;
-  padding: 10px 8px;
+  padding: 8px 8px;
   border-radius: 10px;
   text-align: center;
   font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.15;
   color: #1f2937;
-  box-shadow: 0 1px 0 #e2e8f0;
+  box-shadow: 0 1px 0 #cbd5c4;
   overflow-wrap: anywhere;
 }
 
@@ -172,12 +173,12 @@ button:disabled { opacity: .6; cursor: default; }
 .recall-row { display: flex; gap: 8px; margin-bottom: 12px; }
 .recall-row input {
   flex: 1; font-size: 1.1rem; padding: 12px 14px; border-radius: 12px;
-  border: 2px solid #cbd5e1; background: #fff; color: #1f2937;
+  border: 2px solid #94b8b0; background: #fff; color: #1f2937;
 }
 .recall-row input:focus { outline: none; border-color: #0d9488; }
 .recall-row button { margin: 0; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; min-height: 32px; }
-.chips .chip { background: #e0f2fe; color: #075985; padding: 6px 12px; border-radius: 999px; font-weight: 600; font-size: .95rem; }
+.chips .chip { background: #ffffff; color: #075985; padding: 6px 12px; border-radius: 999px; font-weight: 600; font-size: .95rem; box-shadow: 0 1px 0 #cbd5c4; }
 
 /* EX3 */
 .stroop-word { font-size: 3rem; font-weight: 800; text-align: center; margin: 28px 0; letter-spacing: 2px; }
@@ -191,7 +192,7 @@ button:disabled { opacity: .6; cursor: default; }
 .stroop-example-word { font-size: 1.8rem; font-weight: 800; letter-spacing: 2px; }
 .stroop-example-arrow { font-size: 1.6rem; color: #64748b; }
 .color-btn.small { width: 52px; height: 52px; border-radius: 12px; margin: 0; }
-.hint { color: #64748b; font-size: .95rem; }
+.hint { color: #4b6470; font-size: .95rem; }
 
 /* EX4 */
 .switch-screen .switch-stage {
@@ -225,30 +226,30 @@ button:disabled { opacity: .6; cursor: default; }
 /* RESUMO */
 #summary-cards { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
 #summary-cards .card {
-  background: #fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 2px 0 #e2e8f0;
+  background: #fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 2px 0 #cbd5c4;
 }
 #summary-cards .card h3 { margin: 0 0 6px; font-size: .95rem; color: #0f766e; }
 #summary-cards .card p  { margin: 0; font-size: 1.1rem; color: #1f2937; }
 
 /* HISTÓRICO */
 .history-filter { display: flex; gap: 6px; margin: 8px 0 16px; }
-.filter-btn { flex: 1; background: #e2e8f0; color: #334155; font-size: .9rem; padding: 10px 6px; margin: 0; }
+.filter-btn { flex: 1; background: #ffffff; color: #334155; font-size: .9rem; padding: 10px 6px; margin: 0; box-shadow: 0 2px 0 #cbd5c4; }
 .filter-btn.active { background: #0d9488; color: #fff; }
 .history-charts { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
-.chart-card { background: #fff; border-radius: 14px; padding: 14px 16px 10px; box-shadow: 0 2px 0 #e2e8f0; }
+.chart-card { background: #fff; border-radius: 14px; padding: 14px 16px 10px; box-shadow: 0 2px 0 #cbd5c4; }
 .chart-card h3 { margin: 0 0 4px; font-size: .95rem; color: #0f766e; }
-.chart-card .chart-sub { margin: 0 0 8px; font-size: .8rem; color: #64748b; }
+.chart-card .chart-sub { margin: 0 0 8px; font-size: .8rem; color: #4b6470; }
 .chart-card svg { display: block; width: 100%; height: auto; }
 .history-subtitle { font-size: 1rem; color: #0f766e; margin: 8px 0 10px; }
 .history-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
 .history-item {
-  background: #fff; border-radius: 12px; padding: 10px 14px; box-shadow: 0 2px 0 #e2e8f0;
+  background: #fff; border-radius: 12px; padding: 10px 14px; box-shadow: 0 2px 0 #cbd5c4;
   display: flex; justify-content: space-between; align-items: center; gap: 8px;
 }
 .history-item .hi-date { font-weight: 600; color: #1f2937; font-size: .95rem; }
-.history-item .hi-meta { font-size: .8rem; color: #64748b; }
+.history-item .hi-meta { font-size: .8rem; color: #4b6470; }
 .history-item .hi-badge {
-  background: #e0f2fe; color: #075985; font-size: .75rem; font-weight: 700;
+  background: #d1e7e2; color: #075985; font-size: .75rem; font-weight: 700;
   padding: 4px 8px; border-radius: 999px; white-space: nowrap;
 }
-.history-empty { text-align: center; color: #64748b; padding: 24px 0; }
+.history-empty { text-align: center; color: #4b6470; padding: 24px 0; }
