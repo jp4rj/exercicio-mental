@@ -85,7 +85,7 @@ button:disabled { opacity: .6; cursor: default; }
   font-size: 1rem;
   padding: 12px 8px;
   margin: 0;
-  box-shadow: 0 2px 0 #cbd5e1;
+  box-shadow: 0 2px 0 #cbd5c4;
 }
 
 .topbar {
@@ -128,12 +128,12 @@ button:disabled { opacity: .6; cursor: default; }
 .key-fn    { background: #fde68a; color: #78350f; }
 .key-enter { background: #0d9488; color: #fff; font-size: 1.3rem; }
 
-/* ===== EX2 — Palavras (2 colunas, fonte grande, padding 8px) ===== */
+/* ===== EX2 — Palavras (gap 4px, cronômetro no rodapé) ===== */
 .words-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
-  margin: 8px 0;
+  gap: 4px;
+  margin: 0 0 6px;
 }
 .words-grid .word {
   background: #ffffff;
@@ -149,9 +149,17 @@ button:disabled { opacity: .6; cursor: default; }
 }
 
 .words-footer {
-  text-align: center;
-  margin-top: 6px;
-  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+.words-timer {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #0f766e;
 }
 
 .centered { text-align: center; padding-top: 40px; }
