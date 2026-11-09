@@ -1,5 +1,5 @@
 // sw.js
-const CACHE = "treino-mental-v10";
+const CACHE = "treino-mental-v11";
 const ASSETS = [
   "./",
   "./index.html",
